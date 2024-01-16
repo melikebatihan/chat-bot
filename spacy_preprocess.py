@@ -5,25 +5,43 @@ if platform.system() == "Windows": pass
 
 if platform.system() == "Linux": pass
 
+spacy.prefer_gpu()
+
 # Load English tokenizer, tagger, parser, NER, and word vectors
 nlp = spacy.load("en_core_web_sm")
 
 def preprocess(text):
     # Clean text
-    text = re.sub(r'\W+', ' ', text)  # Remove all non-word characters
     text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
+    print(text + "\n")
     text = re.sub(r'http\S+', '', text)  # Remove URLs
+    print(text + "\n")
+    
+    remove_stopword(nlp, "Here")
     
     # Process text using spaCy
     doc = nlp(text)
-
-    # Tokenization and Lemmatization with spaCy
-    # Additionally, spaCy takes care of normalization (lowercasing)
+    
+    # Tokenization and Lemmatization with spaCy (and normalization (lowercasing))
     tokens = [token.lemma_.lower() for token in doc if not token.is_stop and not token.is_punct]
 
     return ' '.join(tokens)
 
+def add_stopword(pipeline, word):
+    # Add the word and its case variations
+    for variant in {word.lower(), word.upper(), word.title()}:
+        pipeline.Defaults.stop_words.add(variant)
+        pipeline.vocab[variant].is_stop = True
+
+def remove_stopword(pipeline, word):
+    # Remove the word and its case variations
+    for variant in {word.lower(), word.upper(), word.title()}:
+        if variant in pipeline.Defaults.stop_words:
+            print("variant: " + variant + "\n")
+            pipeline.Defaults.stop_words.remove(variant)
+            pipeline.vocab[variant].is_stop = False
+            
 # Example usage
-sample_text = "Here's an example sentence: preprocessing texts can be fun!"
-preprocessed_text = preprocess(sample_text)
-print(preprocessed_text)
+#sample_text = "Here's an example sentence: preprocessing texts can be fun!"
+#preprocessed_text = preprocess(sample_text)
+#print(preprocessed_text)

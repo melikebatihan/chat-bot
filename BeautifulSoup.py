@@ -2,6 +2,9 @@ import requests, re, os
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
+import spacy_preprocess as sp
+import text_preprocess as tp
+
 sublinks = []
 href_links = {}
 website_link = "https://docs.chromasens.de"
@@ -23,10 +26,11 @@ def request_links(url, root_url):
         soup = BeautifulSoup(main_page.content, 'html.parser')
 
         # Find the <div class="content_block_text"> element
-        content_block = soup.find_all('div', class_='content_container_text_sec_in')
+        content_block = soup.find_all('div', class_=['content_block_article_head', 'content_block_text'])
         
         for content in content_block:
-            main_content_text = content.get_text() #(separator='\n', strip=True)
+            main_content_text = content.get_text(separator=" ", strip=True) #(separator='\n', strip=True)
+            main_content_text = tp.preprocess_text(main_content_text)
             file = url.split("/")[-1] + ".txt"
             write_to_file(file, main_content_text)
         
@@ -58,8 +62,8 @@ def request_links(url, root_url):
 
 folder_location = r'C:\Users\melike.batihan\VS_Projects\PythonProjects\VectorDB\contents'
 support_emails = "\\diskstation3.chromasens.local\CSTORE3\P_new\Swap_no_backup\Rudi.Zang\Support-Postfach"
-if not os.path.exists(folder_location):os.mkdir(folder_location)
 
+if not os.path.exists(folder_location):os.mkdir(folder_location)
 
 request_links(website_link, website_link)
 
