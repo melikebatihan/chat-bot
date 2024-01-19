@@ -2,8 +2,8 @@ import requests, re, os
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-import spacy_preprocess as sp
-import text_preprocess as tp
+import spacy_sentence_preprocess as ssp
+import nltk_sentence_preprocess as nsp
 
 sublinks = []
 href_links = {}
@@ -30,7 +30,7 @@ def request_links(url, root_url):
         
         for content in content_block:
             main_content_text = content.get_text(separator=" ", strip=True) #(separator='\n', strip=True)
-            main_content_text = tp.preprocess_text(main_content_text)
+            main_content_text = nsp.preprocess_doc(main_content_text)
             file = url.split("/")[-1] + ".txt"
             write_to_file(file, main_content_text)
         

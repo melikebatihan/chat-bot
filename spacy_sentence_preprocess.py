@@ -5,25 +5,39 @@ if platform.system() == "Windows": pass
 
 if platform.system() == "Linux": pass
 
-spacy.prefer_gpu()
-
-# Load English tokenizer, tagger, parser, NER, and word vectors
-nlp = spacy.load("en_core_web_sm")
-
-def preprocess(text):
-    # Clean text
-    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
-    print(text + "\n")
-    text = re.sub(r'http\S+', '', text)  # Remove URLs
-    print(text + "\n")
+def preprocess_doc(doc, lang):
+    spacy.prefer_gpu()
     
-    remove_stopword(nlp, "Here")
+    # Load English or German model for tokenization and preprocessing
+    nlp = spacy.load("en_core_web_sm")
+    if lang == 'german': nlp = spacy.load("de_core_news_sm")
+    
+    # Clean text    
+    doc = re.sub(r'\s+', ' ', doc)  # Replace multiple spaces with a single space
+    print(doc + "\n")
+    
+    doc = re.sub(r'http\S+', '', doc)  # Remove URLs
+    print(doc + "\n")
+    
+    # Process the document
+    doc = nlp(doc)
+    sentence_tokens = []
+    sentences = [sentence.text for sentence in doc.sents]
+    
+    # Iterate through the sentences
+    for sentence in sentences:
+        sentence_tokens.append(preprocess_sentence(sentence, nlp))
+            
+    return '\n'.join(sentence_tokens)
+
+def preprocess_sentence(sentence, nlp_model):    
+    remove_stopword(nlp_model, "Here")
     
     # Process text using spaCy
-    doc = nlp(text)
+    sentence = nlp_model(sentence)
     
     # Tokenization and Lemmatization with spaCy (and normalization (lowercasing))
-    tokens = [token.lemma_.lower() for token in doc if not token.is_stop and not token.is_punct]
+    tokens = [token.lemma_.lower() for token in sentence if not token.is_stop and not token.is_punct]
 
     return ' '.join(tokens)
 

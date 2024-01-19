@@ -8,16 +8,27 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-def preprocess(text):
-    # Clean text
-    text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces with a single space
-    print(text + "\n")
+def preprocess_doc(doc):
+    sentence_tokens = []
     
-    text = re.sub(r'http\S+', '', text)  # Remove URLs
-    print(text + "\n")
+    # Clean text    
+    doc = re.sub(r'\s+', ' ', doc)  # Replace multiple spaces with a single space
+    print(doc + "\n")
+    
+    doc = re.sub(r'http\S+', '', doc)  # Remove URLs
+    print(doc + "\n")
+    
+    # Split text into sentences
+    sentences = nltk.sent_tokenize(doc)
+    for sentence in sentences:
+        sentence_tokens.append(preprocess_sentence(sentence))
+
+    return '\n'.join(sentence_tokens)
+
+def preprocess_sentence(sentence):
     
     # Tokenize & Normalize
-    tokens = [word.lower() for word in word_tokenize(text)]
+    tokens = [word.lower() for word in word_tokenize(sentence)]
     print(tokens)
     print("\n")
     
@@ -51,6 +62,8 @@ def remove_stopword(stop_words, word):
     # Remove the word and its case variations
     for variant in {word.lower(), word.upper(), word.title()}:
         if variant in stop_words: stop_words.discard(variant)
+
+
             
 # Example usage
 #sample_text = "Here's an example sentence: preprocessing texts can be fun!"
