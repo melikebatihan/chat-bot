@@ -16,21 +16,11 @@ def encode_text(text):
         max_length=512,  # Max length to truncate/pad
         return_tensors='pt',  # Return PyTorch tensors
     )
-    return encoded['input_ids'], encoded['attention_mask']
+    sentence_embeddings = create_embeddings(encoded['input_ids'], encoded['attention_mask'])[0,0]
+    return sentence_embeddings
 
 def create_embeddings(input_ids, attention_mask):
     with torch.no_grad():
         outputs = model(input_ids, attention_mask=attention_mask)
         embeddings = outputs.last_hidden_state
         return embeddings
-    
-# Example usage
-text = "Example sentence for encoding"
-input_ids, attention_mask = encode_text(text)
-embeddings = create_embeddings(input_ids, attention_mask)
-
-
-# Get the embeddings of the '[CLS]' token (for sentence-level embeddings)
-sentence_embedding = embeddings[0, 0]
-
-print(sentence_embedding)

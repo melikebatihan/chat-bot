@@ -1,23 +1,19 @@
 import spacy, platform
 import re
 
-if platform.system() == "Windows": pass
-
-if platform.system() == "Linux": pass
-
-def preprocess_doc(doc, lang):
+def preprocess_doc(doc, lang="english"):
     spacy.prefer_gpu()
     
     # Load English or German model for tokenization and preprocessing
     nlp = spacy.load("en_core_web_sm")
-    if lang == 'german': nlp = spacy.load("de_core_news_sm")
+    if lang == "german": nlp = spacy.load("de_core_news_sm")
     
     # Clean text    
     doc = re.sub(r'\s+', ' ', doc)  # Replace multiple spaces with a single space
-    print(doc + "\n")
+    #print(doc + "\n")
     
     doc = re.sub(r'http\S+', '', doc)  # Remove URLs
-    print(doc + "\n")
+    #print(doc + "\n")
     
     # Process the document
     doc = nlp(doc)
@@ -51,11 +47,5 @@ def remove_stopword(pipeline, word):
     # Remove the word and its case variations
     for variant in {word.lower(), word.upper(), word.title()}:
         if variant in pipeline.Defaults.stop_words:
-            print("variant: " + variant + "\n")
             pipeline.Defaults.stop_words.remove(variant)
             pipeline.vocab[variant].is_stop = False
-            
-# Example usage
-#sample_text = "Here's an example sentence: preprocessing texts can be fun!"
-#preprocessed_text = preprocess(sample_text)
-#print(preprocessed_text)

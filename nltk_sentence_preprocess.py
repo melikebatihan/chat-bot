@@ -13,10 +13,10 @@ def preprocess_doc(doc):
     
     # Clean text    
     doc = re.sub(r'\s+', ' ', doc)  # Replace multiple spaces with a single space
-    print(doc + "\n")
+    #print(doc + "\n")
     
     doc = re.sub(r'http\S+', '', doc)  # Remove URLs
-    print(doc + "\n")
+    #print(doc + "\n")
     
     # Split text into sentences
     sentences = nltk.sent_tokenize(doc)
@@ -29,22 +29,22 @@ def preprocess_sentence(sentence):
     
     # Tokenize & Normalize
     tokens = [word.lower() for word in word_tokenize(sentence)]
-    print(tokens)
-    print("\n")
+    #print(tokens)
+    #print("\n")
     
     stop_words = set(stopwords.words('english'))
     remove_stopword(stop_words, "here")
   
     # Filter stopwords
     tokens = [word for word in tokens if word not in stop_words and not word.startswith("'") and word not in string.punctuation]    
-    print(tokens)
-    print("\n")
+    #print(tokens)
+    #print("\n")
     
     # Lemmatization
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(word) for word in tokens]
-    print(tokens)
-    print("\n")
+    #print(tokens)
+    #print("\n")
     
     # Alternatively, for Stemming
     # from nltk.stem.porter import PorterStemmer
